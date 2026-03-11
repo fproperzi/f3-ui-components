@@ -1,9 +1,9 @@
 <ui-layout title="{{ @pageTitle }}">
 
     <ui-navbar title="{{ @pageTitle }}">
-        <ui-nav-link href="/"       label="Dashboard"></ui-nav-link>
-        <ui-nav-link href="/utenti" label="Utenti" active></ui-nav-link>
-        <ui-nav-link href="/report" label="Report"></ui-nav-link>
+        <ui-nav-link href="{{@BASE}}/"       label="Dashboard"></ui-nav-link>
+        <ui-nav-link href="{{@BASE}}/utenti" label="Utenti" active></ui-nav-link>
+        <ui-nav-link href="{{@BASE}}/report" label="Report"></ui-nav-link>
     </ui-navbar>
 
     <ui-container>
@@ -17,7 +17,7 @@
         <ui-grid cols="2">
 
             <ui-card title="Utente">
-                <ui-form action="/salva" method="POST">
+                <ui-form action="{{@BASE}}/salva" method="POST">
                     <ui-input label="Nome"
                               name="nome"
                               value="{{ @user.nome }}"

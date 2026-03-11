@@ -30,6 +30,36 @@ class UI
         return '<?php echo htmlspecialchars((string)(' . $phpExpr . '),ENT_QUOTES,"UTF-8"); ?>';
     }
 
+    /**
+     * Converte un valore misto (token F3 + testo letterale) in un'espressione PHP valida.
+     *
+     * Il problema: $tpl->token() funziona su un singolo token puro come {{ @BASE }},
+     * ma se il valore e' misto come "{{@BASE}}/utenti" restituisce "$BASE/utenti"
+     * che e' PHP invalido (divisione invece di concatenazione).
+     *
+     * Questa funzione spezza il valore in parti, converte ogni {{ @expr }} con token(),
+     * e ricombina tutto con l'operatore di concatenazione PHP (.):
+     *
+     *   "{{@BASE}}/utenti"          -> ($BASE).'/utenti'
+     *   "{{ @BASE }}/utenti/{{ @id }}" -> ($BASE).'/utenti/'.($id)
+     *   "testo fisso"               -> 'testo fisso'
+     *   "{{ @pageTitle }}"          -> ($pageTitle)
+     */
+    private static function tokenize(string $val, \Template $tpl): string
+    {
+        $parts    = preg_split('/(\{\{.+?\}\})/', $val, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $phpParts = [];
+        foreach ($parts as $part) {
+            if ($part === '') continue;
+            if (str_starts_with($part, '{{')) {
+                $phpParts[] = '(' . $tpl->token($part) . ')';
+            } else {
+                $phpParts[] = "'" . addslashes($part) . "'";
+            }
+        }
+        return implode('.', $phpParts ?: ["''"]);
+    }
+
     public static function register(string $componentsPath = ''): void
     {
         self::$path = $componentsPath ?: dirname(__DIR__) . '/components';
@@ -241,13 +271,13 @@ class UI
                 if (!array_key_exists($key, $attrib)) return '';
                 $val = (string)($attrib[$key] ?? ''); // null -> '' (attributo booleano F3)
                 if ($val === '' || $val === $key) return $key; // boolean attr: required -> "required"
-                if (str_contains($val, '{{')) return '<?php echo ' . $tpl->token($val) . '; ?>';
+                if (str_contains($val, '{{')) return '<?php echo ' . self::tokenize($val, $tpl) . '; ?>';
                 return $val;
             },
             $src
         );
 
-        // {prop:key?} — booleano PHP per <?php if (...):
+        // {prop:key?} — booleano PHP per <?php if (...): ?>
         $src = preg_replace_callback(
             '/\{prop:(\w+)\?\}/',
             static function (array $m) use ($attrib, $tpl): string {
@@ -255,7 +285,7 @@ class UI
                 if (!array_key_exists($key, $attrib)) return '0'; // prop assente -> falso
                 $val = (string)($attrib[$key] ?? ''); // null -> '' (attributo booleano F3)
                 if ($val === '' || $val === $key) return '1';     // booleano presente -> vero
-                if (str_contains($val, '{{')) return "(''!==({$tpl->token($val)}))";
+                if (str_contains($val, '{{')) return "(''!==(".self::tokenize($val, $tpl)."))";
                 return '1';
             },
             $src
@@ -269,7 +299,7 @@ class UI
                 $val = (string)($attrib[$key] ?? ''); // null -> '' (attributo booleano F3)
                 if ($val === '' || $val === $key) return '';
                 if (str_contains($val, '{{')) {
-                    return self::echoEscaped($tpl->token($val));
+                    return self::echoEscaped(self::tokenize($val, $tpl));
                 }
                 return htmlspecialchars($val, ENT_QUOTES, 'UTF-8');
             },

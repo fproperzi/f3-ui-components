@@ -1,0 +1,6 @@
+vendor/
+node_modules/
+tmp/
+css/app.css
+.env
+*.log

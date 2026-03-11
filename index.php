@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-require '../vendor/autoload.php';
+require 'vendor/autoload.php';
 
 $f3 = \Base::instance();
 $f3->set('DEBUG',    3);
