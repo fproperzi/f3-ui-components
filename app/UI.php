@@ -277,7 +277,7 @@ class UI
             $src
         );
 
-        // {prop:key?} — booleano PHP per <?php if (...): ?>
+        // {prop:key?} — booleano PHP per <?php if (...): 
         $src = preg_replace_callback(
             '/\{prop:(\w+)\?\}/',
             static function (array $m) use ($attrib, $tpl): string {
