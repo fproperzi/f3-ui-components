@@ -1,0 +1,11 @@
+{
+    "name": "f3-ui",
+    "version": "1.0.0",
+    "scripts": {
+        "build": "tailwindcss -c tailwind.config.js -i input.css -o css/app.css --minify",
+        "watch": "tailwindcss -c tailwind.config.js -i input.css -o css/app.css --watch"
+    },
+    "devDependencies": {
+        "tailwindcss": "^3"
+    }
+}

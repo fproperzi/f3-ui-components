@@ -1,0 +1,69 @@
+<ui-layout title="{{ @pageTitle }}">
+
+    <ui-navbar title="{{ @pageTitle }}">
+        <ui-nav-link href="/"       label="Dashboard"></ui-nav-link>
+        <ui-nav-link href="/utenti" label="Utenti" active></ui-nav-link>
+        <ui-nav-link href="/report" label="Report"></ui-nav-link>
+    </ui-navbar>
+
+    <ui-container>
+
+        <check if="{{ @saved }}">
+            <true>
+                <ui-alert type="success">Utente creato correttamente</ui-alert>
+            </true>
+        </check>
+
+        <ui-grid cols="2">
+
+            <ui-card title="Utente">
+                <ui-form action="/salva" method="POST">
+                    <ui-input label="Nome"
+                              name="nome"
+                              value="{{ @user.nome }}"
+                              required></ui-input>
+
+                    <ui-input label="Email"
+                              name="email"
+                              type="email"
+                              value="{{ @user.email }}"
+                              required></ui-input>
+
+                    <ui-input label="Password"
+                              name="password"
+                              type="password"
+                              help="Minimo 8 caratteri"></ui-input>
+
+                    <ui-select label="Ruolo" name="ruolo" required>
+                        <option value="">— Seleziona —</option>
+                        <option value="admin">Amministratore</option>
+                        <option value="user">Utente</option>
+                    </ui-select>
+
+                    <ui-textarea label="Note" name="note" rows="3"></ui-textarea>
+
+                    <div class="flex gap-3 pt-2">
+                        <ui-button label="Salva"   type="submit" color="blue"></ui-button>
+                        <ui-button label="Annulla" type="button" color="white"></ui-button>
+                    </div>
+                </ui-form>
+            </ui-card>
+
+            <ui-card title="Stato">
+                <ui-alert type="info">Compila il form e premi Salva.</ui-alert>
+                <ui-alert type="warning">Email deve essere univoca.</ui-alert>
+
+                <p class="text-sm text-gray-600 mb-3">Badge disponibili:</p>
+                <div class="flex flex-wrap gap-2">
+                    <ui-badge label="Attivo"     color="green"></ui-badge>
+                    <ui-badge label="Verificato" color="blue"></ui-badge>
+                    <ui-badge label="Admin"      color="red"></ui-badge>
+                    <ui-badge label="Bozza"      color="yellow"></ui-badge>
+                </div>
+            </ui-card>
+
+        </ui-grid>
+
+    </ui-container>
+
+</ui-layout>

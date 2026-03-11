@@ -1,0 +1,10 @@
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
+    <?php if ({prop:title?}): ?>
+    <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-800">{prop:title}</h2>
+    </div>
+    <?php endif; ?>
+    <div class="p-6">
+        <slot></slot>
+    </div>
+</div>

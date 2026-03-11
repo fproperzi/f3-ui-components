@@ -1,0 +1,11 @@
+RewriteEngine On
+
+# Blocca accesso diretto a directory sensibili
+RewriteRule ^(app|components|templates|vendor)/ - [F,L]
+
+# Serve file e directory esistenti direttamente (css, js, immagini, ecc.)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Tutto il resto → index.php (F3 router)
+RewriteRule ^(.*)$ index.php [QSA,L]
