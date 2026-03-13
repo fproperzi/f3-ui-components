@@ -18,8 +18,19 @@ jobs:
       with:
         php-version: '8.1'
 
+    - name: Check PHP version
+      run: |
+        echo "=== PHP Version ==="
+        php --version
+        echo "=== Current Directory ==="
+        pwd
+        echo "=== Files in directory ==="
+        ls -la
+
     - name: Validate composer.json and composer.lock
-      run: composer validate --strict
+      run: |
+        echo "=== Validating composer ==="
+        composer validate --strict
 
     - name: Cache Composer packages
       id: composer-cache
@@ -31,13 +42,31 @@ jobs:
           ${{ runner.os }}-php-
 
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
+      run: |
+        echo "=== Installing composer dependencies ==="
+        composer install --prefer-dist --no-progress -vvv
+
+    - name: Check vendor directory
+      run: |
+        echo "=== Vendor directory contents ==="
+        ls -la vendor/
 
     - name: Create output directory
-      run: mkdir -p _site
+      run: |
+        echo "=== Creating _site directory ==="
+        mkdir -p _site
+        ls -la _site
 
     - name: Build with PHP/F3
-      run: php index.php > _site/index.html
+      run: |
+        echo "=== Running index.php ==="
+        php -v
+        php index.php > _site/index.html 2>&1
+        echo "=== Build completed ==="
+        echo "=== Output file ==="
+        ls -la _site/
 
     - name: Show output
-      run: cat _site/index.html
+      run: |
+        echo "=== Generated HTML ==="
+        cat _site/index.html
