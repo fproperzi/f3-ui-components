@@ -8,8 +8,6 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 jobs:
   build:
@@ -70,13 +68,6 @@ jobs:
         echo "=== Build completed ==="
         echo "=== Output file ==="
         ls -la _site/
-        echo "=== File size ==="
-        wc -c _site/index.html
-
-    - name: Show output
-      run: |
-        echo "=== Generated HTML ==="
-        cat _site/index.html
         
     - name: Upload Pages artifact
       uses: actions/upload-pages-artifact@v3
@@ -84,5 +75,9 @@ jobs:
         path: '_site'
 
     - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v2
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git add -f _site/index.html
+        git commit -m "Deploy to gh-pages" || true
+        git push -f https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:gh-pages
