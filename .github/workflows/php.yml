@@ -65,6 +65,8 @@ jobs:
         echo "=== Build completed ==="
         echo "=== Output file ==="
         ls -la _site/
+        echo "=== File size ==="
+        wc -c _site/index.html
 
     - name: Show output
       run: |
