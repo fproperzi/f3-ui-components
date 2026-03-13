@@ -1,6 +1,7 @@
 {
     "name": "mio-progetto/gestionale",
     "description": "F3 + Tailwind + Alpine UI components",
+    "license": "MIT",
     "require": {
         "bcosca/fatfree-core": "^3.9"
     },
