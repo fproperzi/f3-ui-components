@@ -43,6 +43,11 @@ jobs:
     - name: Build with PHP/F3
       run: php index.php > _site/index.html
 
+    - name: Upload Pages artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: '_site'
+
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v2
