@@ -45,6 +45,7 @@ jobs:
       run: |
         mkdir -p _site
         php index.php > _site/index.html
+        cp -r css _site/
         ls -la _site
 
     - name: Upload Pages artifact
