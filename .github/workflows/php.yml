@@ -45,6 +45,7 @@ jobs:
       run: |
         mkdir -p _site
         php index.php > _site/index.html
+        mkdir -p _site/css
         cp css/app.css _site/css/app.css
         ls -la _site
 
