@@ -3,11 +3,11 @@ name: PHP Composer
 on:
   push:
     branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build:
@@ -23,20 +23,14 @@ jobs:
 
     - name: Check PHP version
       run: |
-        echo "=== PHP Version ==="
         php --version
-        echo "=== Current Directory ==="
         pwd
-        echo "=== Files in directory ==="
         ls -la
 
-    - name: Validate composer.json and composer.lock
-      run: |
-        echo "=== Validating composer ==="
-        composer validate --strict
+    - name: Validate composer.json
+      run: composer validate --strict
 
     - name: Cache Composer packages
-      id: composer-cache
       uses: actions/cache@v4
       with:
         path: vendor
@@ -45,39 +39,28 @@ jobs:
           ${{ runner.os }}-php-
 
     - name: Install dependencies
-      run: |
-        echo "=== Installing composer dependencies ==="
-        composer install --prefer-dist --no-progress -vvv
+      run: composer install --prefer-dist --no-progress
 
-    - name: Check vendor directory
+    - name: Build static HTML
       run: |
-        echo "=== Vendor directory contents ==="
-        ls -la vendor/
-
-    - name: Create output directory
-      run: |
-        echo "=== Creating _site directory ==="
         mkdir -p _site
+        php index.php > _site/index.html
         ls -la _site
 
-    - name: Build with PHP/F3
-      run: |
-        echo "=== Running index.php ==="
-        php -v
-        php index.php > _site/index.html 2>&1
-        echo "=== Build completed ==="
-        echo "=== Output file ==="
-        ls -la _site/
-        
     - name: Upload Pages artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: '_site'
+        path: _site
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
     - name: Deploy to GitHub Pages
-      run: |
-        git config user.name "GitHub Actions"
-        git config user.email "actions@github.com"
-        git add -f _site/index.html
-        git commit -m "Deploy to gh-pages" || true
-        git push -f https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:gh-pages
+      id: deployment
+      uses: actions/deploy-pages@v4
