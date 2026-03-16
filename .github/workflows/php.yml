@@ -47,7 +47,7 @@ jobs:
         php index.php > _site/index.html
         mkdir -p _site/css
         cp css/app.css _site/css/app.css
-        ls -la _site
+        ls -laR _site
 
     - name: Upload Pages artifact
       uses: actions/upload-pages-artifact@v3
